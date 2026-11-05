@@ -1,0 +1,207 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>هيا نركب البازل!</title><style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;font-family:'Segoe UI',Tahoma,'Noto Sans Arabic',Arial,sans-serif;background:linear-gradient(#d9f2ff,#e8fbf1 60%,#fff6cf);color:#1d4e6b;overflow-x:hidden}
+.scr{display:none;min-height:100vh;padding:14px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;position:relative;z-index:1}
+.scr.on{display:flex}
+h1{font-size:clamp(34px,8vw,64px);margin:0;color:#2a7fc0;text-shadow:0 4px 0 #fff}
+h2{font-size:clamp(24px,5vw,38px);margin:0;color:#2a7fc0}
+.btn{font:inherit;font-size:clamp(20px,4.5vw,30px);font-weight:700;border:0;border-radius:999px;padding:14px 34px;background:#ffd84d;color:#6b4a00;box-shadow:0 6px 0 #e0b52a,0 10px 18px #0002;cursor:pointer}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #e0b52a}
+.btn.b{background:#7cc8f2;color:#fff;box-shadow:0 6px 0 #4aa3d6}
+.btn.m{background:#8fe3b8;color:#17644a;box-shadow:0 6px 0 #5cc590}
+.btn.s{font-size:18px;padding:9px 18px}
+.btn.sel{outline:5px solid #2a7fc0}
+.cards{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+.card{background:#fff;border-radius:28px;padding:14px;box-shadow:0 8px 20px #2a7fc033;cursor:pointer;width:min(250px,44vw);border:4px solid transparent;font:inherit;color:inherit}
+.card:hover{border-color:#ffd84d;transform:scale(1.04)}
+.card img{width:100%;border-radius:18px;display:block}
+.card b{display:block;font-size:21px;margin-top:8px}
+.card .em{font-size:60px}
+.mas{font-size:clamp(70px,18vw,130px);animation:bob 2s ease-in-out infinite}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
+#game{justify-content:flex-start;gap:8px;padding-top:10px}
+#bar{background:#fff;border-radius:22px;padding:8px 18px;font-size:clamp(16px,3.8vw,24px);font-weight:700;box-shadow:0 4px 12px #2a7fc033}
+#stage{position:relative;direction:ltr;margin:6px auto}
+.tray{position:absolute;left:0;right:0;bottom:0;background:#ffffffaa;border:3px dashed #8fe3b8;border-radius:22px}
+.board{position:absolute;top:0;background:#fff;border-radius:14px;box-shadow:0 0 0 6px #fff,0 8px 20px #2a7fc044;overflow:hidden}
+.ghost{position:absolute;inset:0;background-size:100% 100%;opacity:.22}
+.cell{position:absolute;border:2px dashed #7cc8f2}
+.cell.hint{background:#ffe27acc;animation:pulse .5s infinite alternate}
+.piece{position:absolute;touch-action:none;cursor:grab;filter:drop-shadow(0 4px 5px #0004)}
+.piece.drag{cursor:grabbing;filter:drop-shadow(0 12px 12px #0005);transform:scale(1.05)}
+.piece.ok{pointer-events:none;filter:none;animation:pop .35s}
+.piece.hint{animation:pulse .5s infinite alternate;filter:drop-shadow(0 0 14px #ffc400)}
+#mod{position:fixed;inset:0;background:#0a3a5a99;display:none;align-items:center;justify-content:center;z-index:50;padding:14px}
+#mod.on{display:flex}
+.box{background:#fff;border-radius:34px;padding:26px;max-width:560px;width:100%;text-align:center;box-shadow:0 12px 40px #0006;animation:pop .4s;display:flex;flex-direction:column;gap:14px;align-items:center;max-height:94vh;overflow:auto}
+.box .big{font-size:70px}.box p{font-size:clamp(19px,4.5vw,26px);margin:0;line-height:1.7}
+.conf{position:fixed;top:-20px;width:12px;height:18px;z-index:60;animation:fall linear forwards;pointer-events:none}
+.bub{position:fixed;bottom:-40px;border-radius:50%;border:2px solid #fff;background:#ffffff55;animation:rise linear infinite;z-index:0;pointer-events:none}
+@keyframes bob{50%{transform:translateY(-14px)}}
+@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes pulse{to{opacity:.6;transform:scale(1.04)}}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@keyframes rise{to{transform:translateY(-110vh)}}
+body{background:linear-gradient(#7fd6ff,#a8f5cf 55%,#ffe66d)}h1{color:#0a84f0;text-shadow:0 4px 0 #fff,0 8px 14px #0a84f044}h2{color:#0a84f0}.btn{background:#ffc800;box-shadow:0 6px 0 #e09b00,0 10px 18px #0002}.btn.b{background:#1fa0ff;box-shadow:0 6px 0 #0f7ad1}.btn.m{background:#1fd68a;color:#fff;box-shadow:0 6px 0 #0fa968}.card{border-color:#fff;box-shadow:0 8px 20px #0a84f055}#bar{background:#fff7c2;color:#b35c00}
+.qcard{width:min(300px,44vw);background:#fff;border:6px solid #ffc800;border-radius:32px;padding:14px;font:inherit;cursor:pointer;color:#0a5fa8;position:relative;box-shadow:0 8px 20px #0a84f044}.qcard svg{width:100%;display:block}.qcard b{display:block;font-size:clamp(20px,4.5vw,28px)}.qcard .mk{position:absolute;top:6px;left:12px;font-size:56px}.qcard.good{border-color:#1fd68a;background:#d4ffe9;animation:pop .4s}.qcard.bad{border-color:#ff4d4d;background:#ffe0e0;animation:shake .4s}#qf{font-size:34px;font-weight:700;color:#0fa968;min-height:46px}#qp{font-size:30px}@keyframes shake{25%{transform:translateX(-12px)}75%{transform:translateX(12px)}}
+</style></head><body>
+
+<section class="scr on" id="home">
+<div class="mas">🐳</div><h1>هيا نركب البازل!</h1>
+<p style="font-size:22px;margin:0">مع القبطانة سلمى في عالم البحر 🌊</p>
+<button class="btn" style="font-size:36px;padding:20px 50px" onclick="go('modes')">ابدأ اللعب</button>
+</section>
+
+<section class="scr" id="modes">
+<h2>اختر طريقة اللعب</h2>
+<div class="cards">
+<button class="card" onclick="challenge(0)"><div class="em">🧑‍✈️🌊</div><b>تحدي البحر</b><span>٣ مراحل ومعلومات وأسئلة ممتعة</span></button>
+<button class="card" onclick="go('pick')"><div class="em">🧩🐠</div><b>قبطان البحر</b><span>ركّب البازل بحرية</span></button>
+</div>
+<button class="btn s b" onclick="go('home')">🏠 الرئيسية</button>
+</section>
+
+<section class="scr" id="pick">
+<h2>اختر عدد القطع ثم الصورة</h2>
+<div class="row" id="lv"></div>
+<div class="cards" id="pics"></div>
+<label class="btn m s" style="font-size:22px">📷 أضف صورة من جهازك<input type="file" id="up" accept="image/*" hidden></label>
+<button class="btn s b" onclick="go('modes')">رجوع</button>
+</section>
+
+<section class="scr" id="game">
+<div class="row">
+<button class="btn s b" onclick="back()">⬅️ رجوع</button>
+<button class="btn s" onclick="hint()">💡 تلميح</button>
+<button class="btn s m" onclick="restart()">🔄 من جديد</button>
+<button class="btn s b" id="snd" onclick="toggleSnd()">🔊</button>
+</div>
+<div id="bar"></div>
+<div id="stage"></div>
+</section>
+
+<section class="scr" id="quiz"><div id="qp"></div><h1 id="qt" style="font-size:clamp(30px,7vw,52px)"></h1><div class="cards" id="qc"></div><div id="qf"></div><button class="btn s b" onclick="go('modes')">⬅️ رجوع</button></section>
+<div id="mod"><div class="box" id="box"></div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+let AC,soundOn=true,lvl=4,G={},customSrc=null;
+/* ---------- sound ---------- */
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,d=.15,type='sine',delay=0,v=.15){const a=ac();if(!a||!soundOn)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+delay;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.05)}
+function snapS(){tone(660,.12,'triangle');tone(990,.22,'triangle',.08)}
+function winS(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,.3,'triangle',i*.13,.2))}
+function clap(){const a=ac();if(!a||!soundOn)return;const n=a.sampleRate*.06,b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);for(let k=0;k<45;k++){const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s.buffer=b;f.type='bandpass';f.frequency.value=1200+Math.random()*1800;g.gain.value=.6;s.connect(f);f.connect(g);g.connect(a.destination);s.start(a.currentTime+k*.055+Math.random()*.04)}}
+function pickVoice(){const v=speechSynthesis.getVoices().filter(x=>/^ar/i.test(x.lang));return v.find(x=>/laila|zariyah|hoda|salma|amira|noura|fatima|mariam|sara|female/i.test(x.name))||v.find(x=>!/maged|tarik|naayf|majed|hamed|male/i.test(x.name))||v[0]}
+function say(t){if(!soundOn||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ar-SA';const v=pickVoice();if(v){u.voice=v;u.lang=v.lang}u.rate=.85;u.pitch=1.3;speechSynthesis.speak(u)}catch(e){}}
+function toggleSnd(){soundOn=!soundOn;$('snd').textContent=soundOn?'🔊':'🔇';if(!soundOn)speechSynthesis&&speechSynthesis.cancel()}
+document.addEventListener('click',e=>{if(e.target.closest('button,label'))tone(400+Math.random()*300,.1)},true);
+/* ---------- pictures (SVG scenes) ---------- */
+const bg='<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c8edff"/><stop offset="1" stop-color="#5fb8e8"/></linearGradient></defs><rect width="800" height="600" fill="url(#g)"/><path d="M0 520Q200 480 400 520T800 510V600H0Z" fill="#f7e2a0"/><path d="M60 540q-25-70 0-130q25 60 0 130zM740 540q-25-70 0-130q25 60 0 130zM700 540q-20-50 0-100q20 50 0 100z" fill="#5ccf9a"/><circle cx="120" cy="120" r="12" fill="#fff6"/><circle cx="700" cy="90" r="9" fill="#fff6"/><circle cx="650" cy="200" r="14" fill="#fff6"/>';
+const fish=(x,y,s,c,f)=>`<g transform="translate(${x} ${y}) scale(${f?-s:s} ${s})"><ellipse rx="32" ry="20" fill="${c}"/><path d="M28 0L54 -18V18Z" fill="${c}"/><circle cx="-17" cy="-5" r="6" fill="#fff"/><circle cx="-18" cy="-5" r="3" fill="#234"/><path d="M-26 6q6 6 12 0" stroke="#234" stroke-width="2" fill="none"/></g>`;
+const whale=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M150 -10Q230 -50 250 -100Q245 -20 265 20Q200 20 150 30Z" fill="#3f84cf"/><ellipse rx="175" ry="92" fill="#4a90d9"/><ellipse cy="42" rx="150" ry="44" fill="#e6f3ff"/><circle cx="-115" cy="-14" r="9" fill="#123"/><circle cx="-118" cy="-17" r="3" fill="#fff"/><path d="M-165 18q40 30 80 0" stroke="#123" stroke-width="5" fill="none"/><path d="M-50 -90q-5-40-35-52M-50 -90q5-40 35-52" stroke="#fff" stroke-width="7" fill="none"/></g>`;
+const shark=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-10 -50L25 -115L55 -50Z" fill="#7a95aa"/><path d="M135 0L215 -55L198 0L215 55Z" fill="#7a95aa"/><ellipse rx="155" ry="56" fill="#8aa4b8"/><ellipse cy="26" rx="135" ry="26" fill="#eef5fa"/><circle cx="-100" cy="-12" r="8" fill="#123"/><path d="M-148 14q40 28 80 0" stroke="#123" stroke-width="5" fill="none"/></g>`;
+const star=(x,y,s,c)=>`<polygon transform="translate(${x} ${y}) scale(${s})" points="0,-40 9,-13 38,-12 15,6 23,34 0,18 -23,34 -15,6 -38,-12 -9,-13" fill="${c}"/>`;
+const crab=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="-48" cy="-26" r="14" fill="#ff7b6b"/><circle cx="48" cy="-26" r="14" fill="#ff7b6b"/><ellipse rx="42" ry="28" fill="#ff7b6b"/><circle cx="-14" cy="-10" r="6" fill="#fff"/><circle cx="14" cy="-10" r="6" fill="#fff"/><circle cx="-14" cy="-10" r="3" fill="#123"/><circle cx="14" cy="-10" r="3" fill="#123"/></g>`;
+const SC={
+small:bg+fish(200,170,.8,'#ffb347')+fish(560,140,.7,'#ff8fb1',1)+fish(380,260,.9,'#ffe14d')+fish(250,380,.75,'#9b8cff',1)+fish(600,330,.8,'#6fe0b0')+star(140,500,1.3,'#ff9d5c')+star(450,540,.9,'#ffd84d')+crab(620,490,1.2)+'</svg>',
+large:bg+whale(340,250,1.3)+shark(590,470,.85)+'</svg>',
+mix:bg+whale(400,220,1.35)+fish(150,430,.5,'#ffb347')+fish(260,480,.4,'#ff8fb1',1)+fish(330,410,.45,'#ffe14d')+shark(610,470,.55)+star(80,540,.8,'#ff9d5c')+crab(480,520,.8)+'</svg>'
+};
+const uri=s=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
+const PICS=[{k:'small',n:'أسماك صغيرة'},{k:'large',n:'حوت وقرش'},{k:'mix',n:'عالم البحر'}];
+/* ---------- screens ---------- */
+function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));closeMod();window.speechSynthesis&&speechSynthesis.cancel();window.scrollTo(0,0)}
+function buildPick(){$('lv').innerHTML=[4,6,9].map(n=>`<button class="btn s ${n==lvl?'sel':'b'}" onclick="lvl=${n};buildPick()">${n} قطع</button>`).join('');
+let h=PICS.map(p=>`<button class="card" onclick="captain('${p.k}')"><img src="${uri(SC[p.k])}" alt=""><b>${p.n}</b></button>`).join('');
+if(customSrc)h+=`<button class="card" onclick="captain('custom')"><img src="${customSrc}" alt=""><b>صورتي ⭐</b></button>`;$('pics').innerHTML=h}
+const _go=go;go=function(id){if(id==='pick')buildPick();_go(id)};
+$('up').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{customSrc=r.result;buildPick();captain('custom')};r.readAsDataURL(f);e.target.value=''};
+function mod(o){$('box').innerHTML=`<div class="big">${o.e}</div><h2>${o.t}</h2><p>${o.p||''}</p><div class="row">${o.b.map((b,i)=>`<button class="btn ${b[2]||''}" data-i="${i}">${b[0]}</button>`).join('')}</div>`;
+$('box').querySelectorAll('button').forEach(el=>el.onclick=()=>{const f=o.b[el.dataset.i][1];closeMod();f()});$('mod').classList.add('on');if(o.say)say(o.say)}
+function closeMod(){$('mod').classList.remove('on');document.querySelectorAll('.conf').forEach(c=>c.remove())}
+function confetti(){const c=['#ffd84d','#7cc8f2','#8fe3b8','#ff8fb1','#fff'];for(let i=0;i<80;i++){const d=document.createElement('div');d.className='conf';d.style.cssText=`left:${Math.random()*100}vw;background:${c[i%5]};animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*1.5}s;border-radius:${i%2?'50%':'2px'}`;document.body.appendChild(d)}}
+/* ---------- modes ---------- */
+const ST=[
+{k:'small',n:4,t:'المخلوقات الصغيرة 🐠',intro:'مرحباً يا صديقي! أنا القبطانة سلمى. ساعدني في ترتيب ألبوم صور البحر. اسحب كل قطعة إلى مكانها. المرحلة الأولى: المخلوقات الصغيرة.',fact:'الأسماك الصغيرة تسبح معاً في مجموعة كبيرة تسمى سرباً، وهذا يحميها من الأعداء!'},
+{k:'large',n:6,t:'المخلوقات الكبيرة 🐋',intro:'المرحلة الثانية: المخلوقات الكبيرة. هيا نركب صورة الحوت والقرش!',fact:'الحوت الأزرق هو أكبر حيوان في العالم! هو ضخم جداً لكنه يأكل مخلوقات صغيرة.'},
+{k:'mix',n:9,t:'صغير وكبير معاً 🌊',intro:'المرحلة الأخيرة: صغير وكبير معاً. أنت بطل! ركّب الصورة الكبيرة.',fact:'في البحر مخلوقات صغيرة ومخلوقات كبيرة، وكلها مهمة للبحر!'}];
+function challenge(i){G.mode='c';G.si=i;const s=ST[i];go('game');$('bar').textContent=`🧑‍✈️ المرحلة ${i+1} من 3: ${s.t}`;
+startPuzzle(uri(SC[s.k]),s.n,()=>{if(i<2){winS();clap();confetti();mod({e:'🎉⭐🎉',t:'أحسنت!',p:'معلومة: '+s.fact,say:'ممتاز! معلومة: '+s.fact+' هيا ننتقل إلى المرحلة التالية',b:[['المرحلة التالية ⬅️',()=>challenge(i+1)]]})}else{winS();clap();confetti();mod({e:'🎉⭐🎉',t:'أحسنت!',p:'معلومة: '+s.fact,say:'رائع! معلومة: '+s.fact+' والآن وقت الأسئلة!',b:[['وقت الأسئلة ❓',quiz]]})}});
+setTimeout(()=>mod({e:'👩‍✈️',t:'القبطانة سلمى',p:s.intro,say:s.intro,b:[['هيا نبدأ!',()=>{}]]}),300)}
+function captain(k){G.mode='k';G.back='pick';go('game');$('bar').textContent=`🧑‍✈️ ركّب الصورة! (${lvl} قطع)`;startPuzzle(k=='custom'?customSrc:uri(SC[k]),lvl,win);say('اسحب كل قطعة إلى مكانها')}
+function win(){winS();clap();confetti();const m='أحسنت! لقد أكملت البازل بنجاح!';mod({e:'⭐⭐⭐',t:m,p:'🐠🐳🐙🦀🐢',say:'ممتاز! لقد أكملت البازل بنجاح!',b:[['العب مرة أخرى',()=>G.mode=='c'?challenge(0):go('pick')],['الرئيسية',()=>go('home'),'b']]});setTimeout(clap,2500)}
+function back(){go(G.mode=='c'?'modes':'pick')}
+function restart(){if(G.src)startPuzzle(G.src,G.n,G.done)}
+/* ---------- puzzle engine ---------- */
+const loadImg=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=src});
+function edge(x,ax,ay,bx,by,s,t){if(!s){x.lineTo(bx,by);return}const dx=bx-ax,dy=by-ay,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,nx=uy,ny=-ux,P=(u,v)=>[ax+ux*u*L+nx*v*t*s,ay+uy*u*L+ny*v*t*s];
+x.lineTo(...P(.36,0));x.bezierCurveTo(...P(.3,.6),...P(.38,1),...P(.5,1));x.bezierCurveTo(...P(.62,1),...P(.7,.6),...P(.64,0));x.lineTo(bx,by)}
+async function startPuzzle(src,n,done){
+G.src=src;G.n=n;G.done=done;G.placed=0;G.z=10;
+const img=await loadImg(src),base=document.createElement('canvas');base.width=800;base.height=600;
+let sw=img.width,sh=img.height,sx=0,sy=0;if(sw/sh>4/3){sw=sh*4/3;sx=(img.width-sw)/2}else{sh=sw*3/4;sy=(img.height-sh)/2}
+base.getContext('2d').drawImage(img,sx,sy,sw,sh,0,0,800,600);
+const [cols,rows]=n==4?[2,2]:n==6?[3,2]:[3,3],cw=800/cols,ch=600/rows,t=Math.min(cw,ch)*.24;
+const vw=innerWidth,vh=innerHeight,bw=Math.max(250,Math.min(vw-24,600,(vh-290)/1.5*4/3)),k=bw/800,bh=bw*.75,SW=Math.min(vw-12,900);
+const pw=(cw+2*t)*k,ph=(ch+2*t)*k,trayH=ph*1.35,bl=(SW-bw)/2,st=$('stage');
+st.innerHTML='';st.style.width=SW+'px';st.style.height=(bh+trayH+22)+'px';
+st.insertAdjacentHTML('beforeend',`<div class="tray" style="height:${trayH+8}px"></div>`);
+const bd=document.createElement('div');bd.className='board';bd.style.cssText=`left:${bl}px;width:${bw}px;height:${bh}px`;
+bd.innerHTML=`<div class="ghost" style="background-image:url(${base.toDataURL('image/jpeg',.7)})"></div>`;st.appendChild(bd);
+const hs=[],vs=[];for(let i=0;i<n;i++){hs.push(Math.random()<.5?1:-1);vs.push(Math.random()<.5?1:-1)}
+G.pieces=[];G.cells=[];const order=[...Array(n).keys()].sort(()=>Math.random()-.5);
+for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const i=r*cols+c;
+const cell=document.createElement('div');cell.className='cell';cell.style.cssText=`left:${c*cw*k}px;top:${r*ch*k}px;width:${cw*k}px;height:${ch*k}px`;bd.appendChild(cell);G.cells[i]=cell;
+const top=r?-hs[i-cols]:0,bot=r<rows-1?hs[i]:0,lef=c?-vs[i-1]:0,rig=c<cols-1?vs[i]:0;
+const pc=document.createElement('canvas');pc.width=cw+2*t;pc.height=ch+2*t;const x=pc.getContext('2d');
+x.beginPath();x.moveTo(t,t);edge(x,t,t,t+cw,t,top,t);edge(x,t+cw,t,t+cw,t+ch,rig,t);edge(x,t+cw,t+ch,t,t+ch,bot,t);edge(x,t,t+ch,t,t,lef,t);x.closePath();
+x.save();x.clip();x.drawImage(base,t-c*cw,t-r*ch);x.restore();x.lineWidth=3;x.strokeStyle='rgba(255,255,255,.9)';x.stroke();
+pc.className='piece';pc.style.width=pw+'px';pc.style.height=ph+'px';pc._i=i;
+pc._tx=bl+(c*cw-t)*k;pc._ty=(r*ch-t)*k;
+const slot=order.indexOf(i);pc.style.left=Math.max(0,Math.min(SW-pw,(slot+.5)/n*SW-pw/2+(Math.random()-.5)*20))+'px';
+pc.style.top=(bh+14+Math.random()*(trayH-ph+8))+'px';
+bind(pc,st);st.appendChild(pc);G.pieces.push(pc)}
+G.snap=Math.min(cw,ch)*k*.4}
+function bind(el,st){
+el.onpointerdown=e=>{if(el.dataset.done)return;e.preventDefault();el.setPointerCapture(e.pointerId);const r=el.getBoundingClientRect();el._o=[e.clientX-r.left,e.clientY-r.top];el.style.zIndex=++G.z;el.classList.add('drag');tone(520,.08)};
+el.onpointermove=e=>{if(!el._o)return;const s=st.getBoundingClientRect();el.style.left=(e.clientX-s.left-el._o[0])+'px';el.style.top=(e.clientY-s.top-el._o[1])+'px'};
+el.onpointerup=el.onpointercancel=()=>{if(!el._o)return;el._o=null;el.classList.remove('drag');check(el)}}
+function check(el){const dx=el.offsetLeft-el._tx,dy=el.offsetTop-el._ty;
+if(Math.hypot(dx,dy)<G.snap){el.style.left=el._tx+'px';el.style.top=el._ty+'px';el.style.zIndex=1;el.dataset.done=1;el.classList.add('ok');G.placed++;
+if(G.placed>=G.n){snapS();setTimeout(G.done,700)}else{snapS();if(Math.random()<.5)say(['ممتاز!','رائع!'][Math.floor(Math.random()*2)])}}
+else{tone(300,.12,'sine',0,.08)}}
+function hint(){const p=G.pieces.filter(x=>!x.dataset.done);if(!p.length)return;const el=p[Math.floor(Math.random()*p.length)],c=G.cells[el._i];
+[el,c].forEach(o=>{o.classList.add('hint');setTimeout(()=>o.classList.remove('hint'),2600)});tone(880,.15,'triangle');say('ضع هذه القطعة هنا')}
+/* creatures + quiz */
+const NM={fish:'سمكة صغيرة',star:'نجم البحر',urchin:'قنفذ البحر',crab:'سلطعون',jelly:'قنديل البحر',octo:'أخطبوط',dolphin:'دولفين',shark:'قرش',whale:'حوت'};
+const SZ={fish:1,star:2,urchin:2,crab:3,jelly:4,octo:5,dolphin:7,shark:8,whale:10};
+const eye=(x,y,r=5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#fff"/><circle cx="${x}" cy="${y}" r="${r/2}" fill="#123"/>`;
+const smile=(x,y)=>`<path d="M${x-7} ${y}q7 7 14 0" stroke="#123" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+const IC={
+fish:`<ellipse cx="45" cy="50" rx="32" ry="22" fill="#ff9f1c"/><path d="M72 50L96 30V70Z" fill="#ff5e3a"/><path d="M38 30Q50 16 62 30Z" fill="#ffd23f"/>${eye(30,45,6)}${smile(28,60)}`,
+star:`<polygon points="50,8 61,38 93,38 67,57 77,89 50,70 23,89 33,57 7,38 39,38" fill="#ff4f9a" stroke="#ff8cc6" stroke-width="3"/>${eye(42,44,4)}${eye(58,44,4)}${smile(50,56)}`,
+urchin:Array.from({length:16},(_,i)=>{const a=i*Math.PI/8;return `<line x1="${50+20*Math.cos(a)}" y1="${55+20*Math.sin(a)}" x2="${50+42*Math.cos(a)}" y2="${55+42*Math.sin(a)}" stroke="#6a1b9a" stroke-width="5" stroke-linecap="round"/>`}).join('')+`<circle cx="50" cy="55" r="25" fill="#b23cfd"/>${eye(41,52,5)}${eye(59,52,5)}${smile(50,64)}`,
+crab:`<circle cx="16" cy="34" r="12" fill="#ff3b30"/><circle cx="84" cy="34" r="12" fill="#ff3b30"/><ellipse cx="50" cy="58" rx="34" ry="24" fill="#ff5a4d"/><path d="M24 68l-12 12M76 68l12 12M32 76l-6 14M68 76l6 14" stroke="#ff3b30" stroke-width="5" stroke-linecap="round"/>${eye(40,48,6)}${eye(60,48,6)}${smile(50,64)}`,
+jelly:`<path d="M15 55Q15 8 50 8Q85 8 85 55Z" fill="#ff6fd8"/><path d="M25 55q-6 15 0 32M42 55q-6 15 0 38M58 55q6 15 0 38M75 55q6 15 0 32" stroke="#d43fc0" stroke-width="5" fill="none" stroke-linecap="round"/>${eye(38,36,5)}${eye(62,36,5)}${smile(50,46)}<circle cx="30" cy="22" r="5" fill="#fff8"/>`,
+octo:`<path d="M20 60q-14 10-6 30M36 66q-8 14 0 28M50 68v28M64 66q8 14 0 28M80 60q14 10 6 30" stroke="#9c4dff" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="50" cy="38" r="32" fill="#b06bff"/>${eye(38,40,6)}${eye(62,40,6)}${smile(50,54)}<circle cx="38" cy="18" r="5" fill="#fff6"/>`,
+dolphin:`<ellipse cx="50" cy="52" rx="38" ry="19" fill="#22b5ff" transform="rotate(-12 50 52)"/><ellipse cx="14" cy="60" rx="12" ry="5" fill="#22b5ff" transform="rotate(-12 14 60)"/><ellipse cx="48" cy="62" rx="28" ry="8" fill="#e1f5fe" transform="rotate(-12 48 62)"/><path d="M48 36L60 12L68 40Z" fill="#0b86d8"/><path d="M86 42L100 28M86 42L100 56" stroke="#0b86d8" stroke-width="7" stroke-linecap="round"/>${eye(34,48,4)}`,
+shark:`<path d="M44 32L56 8L68 34Z" fill="#5f7d8c"/><path d="M82 50L100 30V70Z" fill="#5f7d8c"/><ellipse cx="46" cy="52" rx="40" ry="21" fill="#7a98a8"/><ellipse cx="44" cy="61" rx="32" ry="9" fill="#f1f7fa"/>${eye(24,46,5)}${smile(22,58)}`,
+whale:`<path d="M80 52Q96 38 98 20Q98 46 100 64Q90 62 80 64Z" fill="#1778e0"/><ellipse cx="46" cy="56" rx="40" ry="28" fill="#2f9bff"/><ellipse cx="44" cy="69" rx="30" ry="12" fill="#e3f2fd"/><path d="M42 28q-4-14-14-16M42 28q4-14 14-16" stroke="#7fd4ff" stroke-width="4" fill="none" stroke-linecap="round"/>${eye(22,52,5)}${smile(24,66)}`};
+const ic=k=>`<svg viewBox="0 0 100 100">${IC[k]}</svg>`;
+const nest=(k,x,y,s)=>`<svg x="${x}" y="${y}" width="${s}" height="${s}" viewBox="0 0 100 100">${IC[k]}</svg>`;
+SC.friends=bg+nest('jelly',70,40,170)+nest('dolphin',290,130,260)+nest('octo',580,50,190)+nest('urchin',80,380,130)+nest('star',250,430,110)+nest('crab',620,390,130)+nest('fish',480,420,90)+'</svg>';
+PICS.push({k:'friends',n:'أصدقاء البحر'});
+function quiz(){go('quiz');const ks=Object.keys(SZ),pr=[];ks.forEach(a=>ks.forEach(b=>{if(SZ[a]-SZ[b]>=3)pr.push([a,b])}));
+G.q=[0,1,2,3,4].map(i=>{const p=pr.splice(Math.floor(Math.random()*pr.length),1)[0];return{big:p[0],small:p[1],ask:i%2?'small':'big'}});G.qi=0;qShow()}
+function qShow(){const q=G.q[G.qi],txt=q.ask=='big'?'أيهما أكبر؟':'أيهما أصغر؟',ans=q[q.ask],o=[q.big,q.small].sort(()=>Math.random()-.5);let lock=false;
+$('qp').textContent='⭐'.repeat(G.qi)+'☆'.repeat(5-G.qi);$('qt').textContent='❓ '+txt;$('qf').textContent='';
+$('qc').innerHTML=o.map(k=>`<button class="qcard" data-k="${k}">${ic(k)}<b>${NM[k]}</b><span class="mk"></span></button>`).join('');
+$('qc').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(lock)return;const mk=b.querySelector('.mk');
+if(b.dataset.k==ans){lock=true;b.classList.add('good');mk.textContent='✅';$('qf').textContent='✅ أحسنت!';snapS();say(['ممتاز!','رائع!'][Math.floor(Math.random()*2)]);setTimeout(()=>{G.qi++;G.qi<5?qShow():win()},1700)}
+else{b.classList.add('bad');mk.textContent='❌';tone(250,.25,'sawtooth',0,.08);say('حاول مرة أخرى');setTimeout(()=>{b.classList.remove('bad');mk.textContent=''},900)}});
+say(txt+' اضغط على الصورة الصحيحة')}
+/* bubbles */
+for(let i=0;i<14;i++){const b=document.createElement('div'),s=10+Math.random()*30;b.className='bub';b.style.cssText=`left:${Math.random()*100}vw;width:${s}px;height:${s}px;animation-duration:${8+Math.random()*10}s;animation-delay:${-Math.random()*10}s`;document.body.appendChild(b)}
+</script></body></html>
